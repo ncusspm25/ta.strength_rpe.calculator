@@ -255,27 +255,7 @@
             z-index: 1;
         }
 
-        /* Center knurling block */
-        .barbell-center {
-            position: absolute;
-            width: 74px;
-            height: 58px;
-            border-radius: 12px;
-            background: linear-gradient(180deg, #606f78, #39464d);
-            z-index: 4;
-        }
 
-        /* Sleeves */
-        .sleeve {
-            position: absolute;
-            width: 22px;
-            height: 66px;
-            border-radius: 10px;
-            background: linear-gradient(180deg, #c5ccd1, #8d999f);
-            z-index: 3;
-        }
-        .sleeve.left  { left: 86px; }
-        .sleeve.right { right: 86px; }
 
         /* Plate stacks */
         .plate-stack {
@@ -376,31 +356,6 @@
             color: rgba(148, 163, 184, 0.4);
             margin-top: 24px;
             letter-spacing: 1px;
-        }
-        /* ==============================================
-           MOBILE RESPONSIVE — scale barbell to fit
-           Barbell natural size: 540 × 164 px
-           ============================================= */
-        @media (max-width: 640px) {
-            /* ~75% scale for mid-size phones */
-            .barbell {
-                transform: scale(0.75);
-                transform-origin: center top;
-            }
-            .barbell-wrap {
-                height: 123px; /* 164 × 0.75 */
-            }
-        }
-
-        @media (max-width: 480px) {
-            /* ~60% scale for small phones */
-            .barbell {
-                transform: scale(0.60);
-                transform-origin: center top;
-            }
-            .barbell-wrap {
-                height: 100px; /* 164 × 0.60 */
-            }
         }
     </style>
 </head>
@@ -711,7 +666,42 @@
             }
 
             document.getElementById('plate-section').style.display = 'block';
+
+            // Scale barbell to fit container width
+            scaleBarbell();
         }
+
+        // ─────────────────────────────────────────────
+        //  FIT BARBELL TO CONTAINER (JS dynamic scale)
+        //  Measures available width and scales from left
+        // ─────────────────────────────────────────────
+        const BARBELL_NATURAL_W  = 540;  // barbell min-width in CSS
+        const BARBELL_NATURAL_H  = 164;  // barbell height in CSS
+
+        function scaleBarbell() {
+            const wrap    = document.querySelector('.barbell-wrap');
+            const barbell = document.querySelector('.barbell');
+            if (!wrap || !barbell) return;
+
+            // Use the plate-section width as the reference
+            const available = document.getElementById('plate-section').clientWidth - 36; // 18px padding × 2
+            if (available <= 0) return;
+
+            if (available < BARBELL_NATURAL_W) {
+                const scale = available / BARBELL_NATURAL_W;
+                barbell.style.transform       = 'scale(' + scale + ')';
+                barbell.style.transformOrigin = 'left top';
+                wrap.style.height             = Math.ceil(BARBELL_NATURAL_H * scale) + 'px';
+                wrap.style.overflow           = 'hidden';
+            } else {
+                barbell.style.transform       = '';
+                barbell.style.transformOrigin = '';
+                wrap.style.height             = '';
+                wrap.style.overflow           = '';
+            }
+        }
+
+        window.addEventListener('resize', scaleBarbell);
     </script>
 </body>
 </html>
