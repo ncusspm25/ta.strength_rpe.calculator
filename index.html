@@ -618,24 +618,45 @@
                 ? '⚠ ' + (bd.remaining * 2).toFixed(2) + ' kg unloaded'
                 : '';
 
-            // Build plate divs
-            const leftEl  = document.getElementById('plates-left');
-            const rightEl = document.getElementById('plates-right');
-            leftEl.innerHTML  = '';
-            rightEl.innerHTML = '';
+            // ── Auto-compress plates when > 3 per side ──────────────
+            const NATURAL_GAP  = 6;   // CSS gap in px
+            const MAX_SIDE_PX  = 180; // max plate-zone width per side (px)
+
+            const totalPlates  = bd.plates.reduce((s, { count }) => s + count, 0);
+            const naturalW     = bd.plates.reduce((s, { meta, count }) => s + meta.w * count, 0)
+                               + Math.max(0, totalPlates - 1) * NATURAL_GAP;
+
+            // Only compress if > 3 plates AND they'd overflow
+            const compress     = (totalPlates > 3 && naturalW > MAX_SIDE_PX)
+                               ? MAX_SIDE_PX / naturalW
+                               : 1;
+            const effectiveGap = Math.max(2, Math.round(NATURAL_GAP * compress));
+
+            // Apply gap to stacks
+            leftEl.style.gap  = effectiveGap + 'px';
+            rightEl.style.gap = effectiveGap + 'px';
 
             bd.plates.forEach(({ meta, count }) => {
+                const effectiveW  = Math.max(5, Math.round(meta.w * compress));
+                const showText    = effectiveW >= 9;
+                const fontSize    = Math.max(0.42, 0.78 * compress).toFixed(2) + 'rem';
+
                 for (let i = 0; i < count; i++) {
                     [leftEl, rightEl].forEach(container => {
                         const div = document.createElement('div');
                         div.className = 'plate ' + meta.cls;
                         div.setAttribute('aria-label', meta.label + ' plate');
                         div.style.cssText =
-                            'width:' + meta.w + 'px;' +
-                            'height:' + meta.h + 'px;' +
+                            'width:'      + effectiveW + 'px;' +
+                            'height:'     + meta.h     + 'px;' +
                             'background:' + meta.color + ';';
                         const span = document.createElement('span');
                         span.textContent = meta.kg;
+                        if (!showText) {
+                            span.style.display = 'none';
+                        } else if (compress < 1) {
+                            span.style.fontSize = fontSize;
+                        }
                         div.appendChild(span);
                         container.appendChild(div);
                     });
