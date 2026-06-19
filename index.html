@@ -301,14 +301,20 @@
             color: #fff;
             font-weight: 700;
             flex-shrink: 0;
+            overflow: hidden;
             box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.22);
         }
 
         .plate span {
-            font-size: 0.84rem;
+            font-size: 0.78rem;
             transform: rotate(-90deg);
             white-space: nowrap;
+            max-width: 100%;
         }
+
+        /* Scale down text for narrow plates */
+        .plate.is-black span,
+        .plate.is-silver span { font-size: 0.6rem; }
 
         /* Light plates get dark text */
         .plate.is-white  span,
@@ -500,10 +506,7 @@
             <div class="barbell-wrap">
                 <div class="barbell">
                     <div class="barbell-shaft"></div>
-                    <div class="sleeve left"></div>
-                    <div class="sleeve right"></div>
                     <div class="plate-stack left"  id="plates-left"></div>
-                    <div class="barbell-center"></div>
                     <div class="plate-stack right" id="plates-right"></div>
                 </div>
             </div>
