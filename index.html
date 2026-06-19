@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Angus RPE Weight Converter</title>
+    <style>
+        /* --- Global Styles --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            padding: 30px 20px;
+        }
+
+        /* --- Main Calculator Container --- */
+        .calculator {
+            width: 100%;
+            max-width: 600px;
+            padding: 28px;
+            border-radius: 32px;
+            background: rgba(30, 41, 59, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #f8fafc;
+            text-align: center;
+        }
+
+        /* --- Logo Styles --- */
+        .top-logo {
+            width: 130px;
+            height: 130px;
+            margin: 0 auto 10px auto;
+            display: block;
+            object-fit: contain;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #38bdf8;
+            margin: 16px 0 12px 0;
+            padding-bottom: 4px;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+            text-align: left;
+        }
+
+        /* --- Input Grid --- */
+        .grid-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            text-align: left;
+        }
+
+        .input-group {
+            margin-bottom: 14px;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(15, 23, 42, 0.75);
+            color: #f8fafc;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        /* --- Button --- */
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 16px;
+            background: #6366f1;
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            margin-top: 15px;
+        }
+
+        button:hover {
+            background: #4f46e5;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        /* --- Results Display --- */
+        .result-container {
+            margin-top: 22px;
+            padding: 18px;
+            border-radius: 18px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: none;
+            text-align: left;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .result-item:last-child {
+            margin-bottom: 0;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .result-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #94a3b8;
+        }
+
+        .result-value.target-weight {
+            color: #10b981;
+            font-size: 1.7rem;
+        }
+
+        /* =============================================
+           BARBELL + PLATE VISUALIZATION
+        ============================================= */
+        .plate-section {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 20px;
+            background: rgba(15, 23, 42, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            text-align: left;
+        }
+
+        .plate-section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #38bdf8;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 4px;
+        }
+
+        .plate-total-line {
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: #10b981;
+            line-height: 1;
+            margin-bottom: 2px;
+        }
+
+        .plate-sub {
+            font-size: 0.82rem;
+            color: #64748b;
+            margin-bottom: 16px;
+        }
+
+        /* Barbell wrapper — horizontally scrollable on narrow screens */
+        .barbell-wrap {
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .barbell {
+            position: relative;
+            min-width: 540px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Shaft */
+        .barbell-shaft {
+            position: absolute;
+            left: 44px;
+            right: 44px;
+            height: 12px;
+            border-radius: 999px;
+            background: linear-gradient(180deg, #d5d8db, #8d999f);
+            box-shadow: inset 0 -2px 4px rgba(0,0,0,0.3);
+            z-index: 1;
+        }
+
+        /* Center collar / knurling block */
+        .barbell-center {
+            position: absolute;
+            width: 68px;
+            height: 52px;
+            border-radius: 10px;
+            background: linear-gradient(180deg, #5a6772, #333e47);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            z-index: 4;
+        }
+
+        /* Sleeves */
+        .sleeve {
+            position: absolute;
+            width: 18px;
+            height: 58px;
+            border-radius: 8px;
+            background: linear-gradient(180deg, #c5ccd1, #8d999f);
+            z-index: 3;
+        }
+        .sleeve.left  { left: 68px; }
+        .sleeve.right { right: 68px; }
+
+        /* Plate stacks */
+        .plate-stack {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            z-index: 2;
+        }
+        .plate-stack.left {
+            left: 96px;
+            flex-direction: row-reverse;
+        }
+        .plate-stack.right {
+            right: 96px;
+            flex-direction: row;
+        }
+
+        /* Individual plate */
+        .plate {
+            border-radius: 50%;
+            flex-shrink: 0;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        /* Weight label overlaid on plate */
+        .plate-lbl {
+            position: absolute;
+            bottom: 11%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.62rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+            white-space: nowrap;
+            pointer-events: none;
+            letter-spacing: 0.02em;
+        }
+        .plate.is-white .plate-lbl,
+        .plate.is-silver .plate-lbl {
+            color: #1a2b38;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.6);
+        }
+
+        /* Legend */
+        .plate-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .legend-chip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 10px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            font-size: 0.78rem;
+            color: #94a3b8;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .plate-warn {
+            margin-top: 10px;
+            font-size: 0.78rem;
+            color: #f59e0b;
+        }
+
+        /* =============================================
+           SIGNATURE
+        ============================================= */
+        .signature {
+            text-align: center;
+            font-size: 0.75rem;
+            color: rgba(148, 163, 184, 0.4);
+            margin-top: 24px;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <img class="top-logo" src="logo.png" alt="Team Angus Strength Logo">
+        <h2>Angus RPE Calculator</h2>
+        
+        <div class="section-title">1. Current Base Performance</div>
+        <div class="grid-inputs">
+            <div class="input-group">
+                <label for="base-weight">Weight (kg)</label>
+                <input type="number" id="base-weight" value="100" min="0" step="any">
+            </div>
+            <div class="input-group">
+                <label for="base-reps">Reps</label>
+                <select id="base-reps">
+                    <option value="1" selected>1 rep</option>
+                    <option value="2">2 reps</option>
+                    <option value="3">3 reps</option>
+                    <option value="4">4 reps</option>
+                    <option value="5">5 reps</option>
+                    <option value="6">6 reps</option>
+                    <option value="7">7 reps</option>
+                    <option value="8">8 reps</option>
+                </select>
+            </div>
+            <div class="input-group full-width">
+                <label for="base-rpe">Base RPE</label>
+                <select id="base-rpe">
+                    <option value="10" selected>10 - Maximum effort, 0 reps in reserve</option>
+                    <option value="9.5">9.5 - Maybe could do 1 more rep</option>
+                    <option value="9">9 - Definitely could do 1 more rep</option>
+                    <option value="8.5">8.5 - Maybe could do 2 more reps</option>
+                    <option value="8">8 - Definitely could do 2 more reps</option>
+                    <option value="7.5">7.5 - Maybe could do 3 more reps</option>
+                    <option value="7">7 - Definitely could do 3 more reps</option>
+                    <option value="6.5">6.5 - Definitely could do 4 more reps</option>
+                    <option value="6">6 - 4 reps in reserve</option>
+                    <option value="5.5">5.5 - Maybe could do 5 more reps</option>
+                    <option value="5">5 - 5 reps in reserve</option>
+                    <option value="4.5">4.5 - Maybe could do 6 more reps</option>
+                    <option value="4">4 - 6 reps in reserve</option>
+                    <option value="3.5">3.5 - Maybe could do 7 more reps</option>
+                    <option value="3">3 - 7 reps in reserve</option>
+                    <option value="2.5">2.5 - Maybe could do 8 more reps</option>
+                    <option value="2">2 - 8 reps in reserve</option>
+                    <option value="1.5">1.5 - Extremely light effort</option>
+                    <option value="1">1 - Very light effort</option>
+                    <option value="0.5">0.5 - Minimal effort</option>
+                    <option value="0">0 - No effort</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="section-title">2. Target Goal</div>
+        <div class="grid-inputs">
+            <div class="input-group">
+                <label for="target-reps">Target Reps</label>
+                <select id="target-reps">
+                    <option value="1">1 rep</option>
+                    <option value="2" selected>2 reps</option>
+                    <option value="3">3 reps</option>
+                    <option value="4">4 reps</option>
+                    <option value="5">5 reps</option>
+                    <option value="6">6 reps</option>
+                    <option value="7">7 reps</option>
+                    <option value="8">8 reps</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="target-rpe">Target RPE</label>
+                <select id="target-rpe">
+                    <option value="10">10 - Max effort</option>
+                    <option value="9.5">9.5 - 1 more rep?</option>
+                    <option value="9">9 - 1 more rep</option>
+                    <option value="8.5">8.5 - 2 more reps?</option>
+                    <option value="8">8 - 2 more reps</option>
+                    <option value="7.5">7.5 - 3 more reps?</option>
+                    <option value="7">7 - 3 more reps</option>
+                    <option value="6.5" selected>6.5 - 4 more reps</option>
+                    <option value="6">6 - 4 reps in reserve</option>
+                    <option value="5.5">5.5 - 5 reps in reserve?</option>
+                    <option value="5">5 - 5 reps in reserve</option>
+                    <option value="4.5">4.5 - 6 reps in reserve?</option>
+                    <option value="4">4 - 6 reps in reserve</option>
+                    <option value="3.5">3.5 - 7 reps in reserve?</option>
+                    <option value="3">3 - 7 reps in reserve</option>
+                    <option value="2.5">2.5 - 8 reps in reserve?</option>
+                    <option value="2">2 - 8 reps in reserve</option>
+                    <option value="1.5">1.5 - Extremely light</option>
+                    <option value="1">1 - Very light</option>
+                    <option value="0.5">0.5 - Minimal effort</option>
+                    <option value="0">0 - No effort</option>
+                </select>
+            </div>
+        </div>
+
+        <button onclick="convertWeight()">Convert Target Weight</button>
+
+        <!-- RPE Results -->
+        <div class="result-container" id="results">
+            <div class="result-item">
+                <span class="result-label">Estimated 1RM:</span>
+                <span class="result-value" id="est-1rm">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Target Intensity:</span>
+                <span class="result-value" id="target-intensity">-</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Target Weight:</span>
+                <span class="result-value target-weight" id="target-weight-val">-</span>
+            </div>
+        </div>
+
+        <!-- Barbell + Plate Visualization -->
+        <div class="plate-section" id="plate-section">
+            <div class="plate-section-title">Plate Setup · 20 kg Barbell</div>
+            <div class="plate-total-line" id="plate-total-display">—</div>
+            <div class="plate-sub" id="plate-sub-display">Loading…</div>
+
+            <div class="barbell-wrap">
+                <div class="barbell" id="barbell-container">
+                    <div class="barbell-shaft"></div>
+                    <div class="sleeve left"></div>
+                    <div class="sleeve right"></div>
+                    <div class="plate-stack left"  id="plates-left"></div>
+                    <div class="barbell-center"></div>
+                    <div class="plate-stack right" id="plates-right"></div>
+                </div>
+            </div>
+
+            <div class="plate-legend" id="plate-legend"></div>
+            <div class="plate-warn"   id="plate-warn"></div>
+        </div>
+
+        <div class="signature">Made by Enzo Ho</div>
+    </div>
+
+    <script>
+        // ─────────────────────────────────────────────
+        //  RPE TABLE
+        // ─────────────────────────────────────────────
+        const rpeTable = {
+            "10":  [100.0, 95.5, 92.2, 89.2, 86.3, 83.7, 81.1, 78.6],
+            "9.5": [97.8,  93.8, 90.7, 87.7, 85.0, 82.4, 79.9, 77.4],
+            "9":   [95.5,  92.2, 89.2, 86.3, 83.7, 81.1, 78.6, 76.2],
+            "8.5": [93.8,  90.7, 87.7, 85.0, 82.4, 79.9, 77.4, 75.0],
+            "8":   [92.2,  89.2, 86.3, 83.7, 81.1, 78.6, 76.2, 73.9],
+            "7.5": [90.7,  87.7, 85.0, 82.4, 79.9, 77.4, 75.0, 72.3],
+            "7":   [89.2,  86.3, 83.7, 81.1, 78.6, 76.2, 73.9, 70.7],
+            "6.5": [87.7,  85.0, 82.4, 79.9, 77.4, 75.0, 72.3, 69.4],
+            "6":   [86.3,  83.7, 81.1, 78.6, 76.2, 73.9, 70.7, 68.0],
+            "5.5": [85.0,  82.4, 79.9, 77.4, 75.0, 72.3, 69.4, 66.7],
+            "5":   [83.7,  81.1, 78.6, 76.2, 73.9, 70.7, 68.0, 65.3],
+            "4.5": [82.4,  79.9, 77.4, 75.0, 72.3, 69.4, 66.7, 63.9],
+            "4":   [81.1,  78.6, 76.2, 73.9, 70.7, 68.0, 65.3, 62.6],
+            "3.5": [79.9,  77.4, 75.0, 72.3, 69.4, 66.7, 63.9, 61.2],
+            "3":   [78.6,  76.2, 73.9, 70.7, 68.0, 65.3, 62.6, 59.9],
+            "2.5": [77.4,  75.0, 72.3, 69.4, 66.7, 63.9, 61.2, 58.5],
+            "2":   [76.2,  73.9, 70.7, 68.0, 65.3, 62.6, 59.9, 57.2],
+            "1.5": [75.0,  72.3, 69.4, 66.7, 63.9, 61.2, 58.5, 55.9],
+            "1":   [73.9,  70.7, 68.0, 65.3, 62.6, 59.9, 57.2, 54.5],
+            "0.5": [72.3,  69.4, 66.7, 63.9, 61.2, 58.5, 55.9, 53.1],
+            "0":   [70.7,  68.0, 65.3, 62.6, 59.9, 57.2, 54.5, 51.8]
+        };
+
+        // ─────────────────────────────────────────────
+        //  PLATE SPRITE DATA  (ANGUS.png  1512 × 781 px)
+        //  cx = plate centre x, cy = centre y, d = diameter (all in original px)
+        //  displayH = rendered diameter on screen (px)
+        // ─────────────────────────────────────────────
+        const PLATE_META = [
+            { kg: 25,   cx: 148,  cy: 365, d: 590, displayH: 116, color: "#bf3b38", cls: "is-red",    label: "25 kg · Red"    },
+            { kg: 20,   cx: 318,  cy: 372, d: 548, displayH: 108, color: "#2e66b8", cls: "is-blue",   label: "20 kg · Blue"   },
+            { kg: 15,   cx: 503,  cy: 378, d: 510, displayH: 100, color: "#d9a02c", cls: "is-yellow", label: "15 kg · Yellow" },
+            { kg: 10,   cx: 670,  cy: 386, d: 456, displayH: 90,  color: "#1d7a4b", cls: "is-green",  label: "10 kg · Green"  },
+            { kg: 5,    cx: 820,  cy: 400, d: 380, displayH: 76,  color: "#ebe9e3", cls: "is-white",  label: "5 kg · White"   },
+            { kg: 2.5,  cx: 917,  cy: 430, d: 238, displayH: 62,  color: "#252525", cls: "is-black",  label: "2.5 kg · Black" },
+            { kg: 1.25, cx: 1005, cy: 440, d: 198, displayH: 52,  color: "#bdc3c8", cls: "is-silver", label: "1.25 kg · Silver"},
+        ];
+
+        const ANGUS_W = 1512;
+        const ANGUS_H = 781;
+        const BARBELL_KG = 20; // fixed barbell weight
+
+        // ─────────────────────────────────────────────
+        //  RPE CONVERT
+        // ─────────────────────────────────────────────
+        function convertWeight() {
+            const baseWeight = parseFloat(document.getElementById('base-weight').value);
+            const baseReps   = parseInt(document.getElementById('base-reps').value);
+            const baseRpe    = document.getElementById('base-rpe').value;
+            const targetReps = parseInt(document.getElementById('target-reps').value);
+            const targetRpe  = document.getElementById('target-rpe').value;
+
+            if (isNaN(baseWeight) || baseWeight <= 0) {
+                alert('Please enter a valid base weight!');
+                return;
+            }
+
+            const baseList   = rpeTable[baseRpe];
+            const targetList = rpeTable[targetRpe];
+
+            if (!baseList || !targetList) {
+                alert('Error fetching RPE data.');
+                return;
+            }
+
+            const basePct   = baseList[baseReps - 1] / 100;
+            const targetPct = targetList[targetReps - 1] / 100;
+            const e1rm      = baseWeight / basePct;
+            const targetW   = e1rm * targetPct;
+
+            // Round to nearest 0.5 kg for plate math
+            const roundedW = Math.round(targetW * 2) / 2;
+
+            document.getElementById('est-1rm').innerText         = e1rm.toFixed(2) + ' kg';
+            document.getElementById('target-intensity').innerText = (targetPct * 100).toFixed(1) + '%';
+            document.getElementById('target-weight-val').innerText = targetW.toFixed(2) + ' kg';
+
+            document.getElementById('results').style.display = 'block';
+
+            renderPlateSetup(roundedW);
+        }
+
+        // ─────────────────────────────────────────────
+        //  PLATE BREAKDOWN LOGIC
+        // ─────────────────────────────────────────────
+        function buildBreakdown(totalKg, barbellKg) {
+            let remaining = Math.max(0, totalKg - barbellKg) / 2; // per side
+            const plates  = [];
+
+            for (const meta of PLATE_META) {
+                if (remaining <= 0) break;
+                const count = Math.floor(remaining / meta.kg);
+                if (count > 0) {
+                    plates.push({ meta, count });
+                    remaining -= count * meta.kg;
+                }
+            }
+
+            return {
+                plates,
+                perSide: Math.max(0, totalKg - barbellKg) / 2,
+                remaining: Math.round(remaining * 100) / 100,
+            };
+        }
+
+        // ─────────────────────────────────────────────
+        //  BUILD ONE PLATE DIV (CSS sprite from ANGUS.png)
+        // ─────────────────────────────────────────────
+        function buildPlateDiv(meta, side) {
+            const D     = meta.displayH;           // rendered circle diameter (px)
+            const scale = D / meta.d;
+            const bgW   = Math.round(ANGUS_W * scale);
+            const bgH   = Math.round(ANGUS_H * scale);
+            const cX    = Math.round(meta.cx * scale);
+            const cY    = Math.round(meta.cy * scale);
+            const bpX   = -(cX - D / 2);
+            const bpY   = -(cY - D / 2);
+
+            const div = document.createElement('div');
+            div.className = `plate ${meta.cls}`;
+            div.setAttribute('aria-label', `${side} ${meta.kg} kg plate`);
+            div.style.cssText = `
+                width:${D}px;
+                height:${D}px;
+                background-image:url('ANGUS.png');
+                background-size:${bgW}px ${bgH}px;
+                background-position:${bpX}px ${bpY}px;
+                background-repeat:no-repeat;
+                background-color:transparent;
+            `;
+
+            const lbl = document.createElement('span');
+            lbl.className = 'plate-lbl';
+            lbl.textContent = meta.kg;
+            div.appendChild(lbl);
+            return div;
+        }
+
+        // ─────────────────────────────────────────────
+        //  RENDER FULL BARBELL VISUALIZATION
+        // ─────────────────────────────────────────────
+        function renderPlateSetup(totalKg) {
+            const section  = document.getElementById('plate-section');
+            const leftEl   = document.getElementById('plates-left');
+            const rightEl  = document.getElementById('plates-right');
+            const legendEl = document.getElementById('plate-legend');
+            const warnEl   = document.getElementById('plate-warn');
+
+            const bd = buildBreakdown(totalKg, BARBELL_KG);
+
+            // Header text
+            document.getElementById('plate-total-display').textContent =
+                totalKg.toFixed(1) + ' kg';
+            document.getElementById('plate-sub-display').textContent =
+                `20 kg barbell + ${bd.perSide.toFixed(2)} kg per side`;
+
+            // Clear previous plates
+            leftEl.innerHTML  = '';
+            rightEl.innerHTML = '';
+            legendEl.innerHTML = '';
+            warnEl.textContent = '';
+
+            // Draw plates
+            bd.plates.forEach(({ meta, count }) => {
+                for (let i = 0; i < count; i++) {
+                    leftEl.appendChild(buildPlateDiv(meta, 'Left'));
+                    rightEl.appendChild(buildPlateDiv(meta, 'Right'));
+                }
+            });
+
+            // Legend
+            if (bd.plates.length === 0) {
+                const chip = document.createElement('span');
+                chip.className = 'legend-chip';
+                chip.textContent = 'Barbell only (20 kg)';
+                legendEl.appendChild(chip);
+            } else {
+                bd.plates.forEach(({ meta, count }) => {
+                    const chip = document.createElement('div');
+                    chip.className = 'legend-chip';
+
+                    const dot = document.createElement('span');
+                    dot.className = 'legend-dot';
+                    dot.style.background = meta.color;
+
+                    chip.appendChild(dot);
+                    chip.appendChild(document.createTextNode(
+                        `${meta.label}  ×${count} per side`
+                    ));
+                    legendEl.appendChild(chip);
+                });
+            }
+
+            // Warning if leftover weight can't be accounted for
+            if (bd.remaining >= 0.1) {
+                warnEl.textContent =
+                    `⚠️  ${(bd.remaining * 2).toFixed(2)} kg cannot be loaded with standard plates — consider adjusting rounding.`;
+            }
+
+            section.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
