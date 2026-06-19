@@ -632,6 +632,12 @@
                                : 1;
             const effectiveGap = Math.max(2, Math.round(NATURAL_GAP * compress));
 
+            // Get plate stack containers and clear them
+            const leftEl  = document.getElementById('plates-left');
+            const rightEl = document.getElementById('plates-right');
+            leftEl.innerHTML  = '';
+            rightEl.innerHTML = '';
+
             // Apply gap to stacks
             leftEl.style.gap  = effectiveGap + 'px';
             rightEl.style.gap = effectiveGap + 'px';
