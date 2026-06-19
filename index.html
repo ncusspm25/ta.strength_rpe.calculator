@@ -227,10 +227,11 @@
             max-width: 200px;
         }
 
-        /* Barbell wrapper — scrollable on small screens */
+        /* Barbell wrapper — scales down on mobile instead of scrolling */
         .barbell-wrap {
-            overflow-x: auto;
+            overflow: hidden;
             padding-bottom: 6px;
+            /* height will be set by media query to match scaled barbell */
         }
 
         .barbell {
@@ -375,6 +376,31 @@
             color: rgba(148, 163, 184, 0.4);
             margin-top: 24px;
             letter-spacing: 1px;
+        }
+        /* ==============================================
+           MOBILE RESPONSIVE — scale barbell to fit
+           Barbell natural size: 540 × 164 px
+           ============================================= */
+        @media (max-width: 640px) {
+            /* ~75% scale for mid-size phones */
+            .barbell {
+                transform: scale(0.75);
+                transform-origin: center top;
+            }
+            .barbell-wrap {
+                height: 123px; /* 164 × 0.75 */
+            }
+        }
+
+        @media (max-width: 480px) {
+            /* ~60% scale for small phones */
+            .barbell {
+                transform: scale(0.60);
+                transform-origin: center top;
+            }
+            .barbell-wrap {
+                height: 100px; /* 164 × 0.60 */
+            }
         }
     </style>
 </head>
