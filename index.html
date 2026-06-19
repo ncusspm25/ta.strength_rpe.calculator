@@ -182,46 +182,61 @@
         .plate-section {
             display: none;
             margin-top: 20px;
-            padding: 20px;
+            padding: 20px 18px;
             border-radius: 20px;
             background: rgba(15, 23, 42, 0.55);
             border: 1px solid rgba(255, 255, 255, 0.06);
             text-align: left;
         }
 
+        .plate-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
         .plate-section-title {
-            font-size: 0.85rem;
+            font-size: 0.78rem;
             font-weight: 700;
-            color: #38bdf8;
+            color: #64748b;
             text-transform: uppercase;
-            letter-spacing: 0.12em;
+            letter-spacing: 0.14em;
             margin-bottom: 4px;
         }
 
         .plate-total-line {
-            font-size: 1.9rem;
+            font-size: 2rem;
             font-weight: 800;
             color: #10b981;
             line-height: 1;
-            margin-bottom: 2px;
         }
 
         .plate-sub {
-            font-size: 0.82rem;
-            color: #64748b;
-            margin-bottom: 16px;
+            font-size: 0.8rem;
+            color: #475569;
+            margin-top: 2px;
         }
 
-        /* Barbell wrapper — horizontally scrollable on narrow screens */
+        .plate-warn-inline {
+            font-size: 0.78rem;
+            color: #f59e0b;
+            text-align: right;
+            max-width: 200px;
+        }
+
+        /* Barbell wrapper — scrollable on small screens */
         .barbell-wrap {
             overflow-x: auto;
-            padding-bottom: 4px;
+            padding-bottom: 6px;
         }
 
         .barbell {
             position: relative;
             min-width: 540px;
-            height: 180px;
+            height: 164px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -230,113 +245,117 @@
         /* Shaft */
         .barbell-shaft {
             position: absolute;
-            left: 44px;
-            right: 44px;
-            height: 12px;
+            left: 56px;
+            right: 56px;
+            height: 14px;
             border-radius: 999px;
-            background: linear-gradient(180deg, #d5d8db, #8d999f);
-            box-shadow: inset 0 -2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(180deg, #d5d8db, #a4aeb4);
+            box-shadow: inset 0 0 0 1px rgba(23, 33, 43, 0.12);
             z-index: 1;
         }
 
-        /* Center collar / knurling block */
+        /* Center knurling block */
         .barbell-center {
             position: absolute;
-            width: 68px;
-            height: 52px;
-            border-radius: 10px;
-            background: linear-gradient(180deg, #5a6772, #333e47);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            width: 74px;
+            height: 58px;
+            border-radius: 12px;
+            background: linear-gradient(180deg, #606f78, #39464d);
             z-index: 4;
         }
 
         /* Sleeves */
         .sleeve {
             position: absolute;
-            width: 18px;
-            height: 58px;
-            border-radius: 8px;
+            width: 22px;
+            height: 66px;
+            border-radius: 10px;
             background: linear-gradient(180deg, #c5ccd1, #8d999f);
             z-index: 3;
         }
-        .sleeve.left  { left: 68px; }
-        .sleeve.right { right: 68px; }
+        .sleeve.left  { left: 86px; }
+        .sleeve.right { right: 86px; }
 
         /* Plate stacks */
         .plate-stack {
             position: absolute;
             display: flex;
             align-items: center;
-            gap: 3px;
+            gap: 6px;
             z-index: 2;
         }
         .plate-stack.left {
-            left: 96px;
+            left: 120px;
             flex-direction: row-reverse;
         }
         .plate-stack.right {
-            right: 96px;
+            right: 120px;
             flex-direction: row;
         }
 
-        /* Individual plate */
+        /* Individual plate — colored rounded rect, same as SBD original */
         .plate {
-            border-radius: 50%;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            color: #fff;
+            font-weight: 700;
             flex-shrink: 0;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.22);
         }
 
-        /* Weight label overlaid on plate */
-        .plate-lbl {
-            position: absolute;
-            bottom: 11%;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.62rem;
-            font-weight: 900;
-            color: #fff;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+        .plate span {
+            font-size: 0.84rem;
+            transform: rotate(-90deg);
             white-space: nowrap;
-            pointer-events: none;
-            letter-spacing: 0.02em;
         }
-        .plate.is-white .plate-lbl,
-        .plate.is-silver .plate-lbl {
-            color: #1a2b38;
-            text-shadow: 0 1px 2px rgba(255,255,255,0.6);
-        }
+
+        /* Light plates get dark text */
+        .plate.is-white  span,
+        .plate.is-yellow span,
+        .plate.is-silver span { color: #10202c; }
 
         /* Legend */
         .plate-legend {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
             margin-top: 16px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
         }
 
-        .legend-chip {
+        .plate-legend-item {
+            padding: 10px 12px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .legend-top {
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 5px 10px;
-            border-radius: 999px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.08);
-            font-size: 0.78rem;
-            color: #94a3b8;
+            gap: 7px;
+            font-size: 0.85rem;
+            color: #e2e8f0;
+            font-weight: 600;
         }
 
         .legend-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
             flex-shrink: 0;
         }
 
+        .legend-count {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
         .plate-warn {
-            margin-top: 10px;
+            margin-top: 12px;
             font-size: 0.78rem;
             color: #f59e0b;
         }
@@ -358,7 +377,7 @@
     <div class="calculator">
         <img class="top-logo" src="logo.png" alt="Team Angus Strength Logo">
         <h2>Angus RPE Calculator</h2>
-        
+
         <div class="section-title">1. Current Base Performance</div>
         <div class="grid-inputs">
             <div class="input-group">
@@ -469,12 +488,17 @@
 
         <!-- Barbell + Plate Visualization -->
         <div class="plate-section" id="plate-section">
-            <div class="plate-section-title">Plate Setup · 20 kg Barbell</div>
-            <div class="plate-total-line" id="plate-total-display">—</div>
-            <div class="plate-sub" id="plate-sub-display">Loading…</div>
+            <div class="plate-header">
+                <div>
+                    <div class="plate-section-title">Plate Setup · 20 kg Barbell</div>
+                    <div class="plate-total-line" id="plate-total-display">—</div>
+                    <div class="plate-sub" id="plate-sub-display"></div>
+                </div>
+                <div class="plate-warn-inline" id="plate-warn-inline"></div>
+            </div>
 
             <div class="barbell-wrap">
-                <div class="barbell" id="barbell-container">
+                <div class="barbell">
                     <div class="barbell-shaft"></div>
                     <div class="sleeve left"></div>
                     <div class="sleeve right"></div>
@@ -485,7 +509,6 @@
             </div>
 
             <div class="plate-legend" id="plate-legend"></div>
-            <div class="plate-warn"   id="plate-warn"></div>
         </div>
 
         <div class="signature">Made by Enzo Ho</div>
@@ -520,23 +543,19 @@
         };
 
         // ─────────────────────────────────────────────
-        //  PLATE SPRITE DATA  (ANGUS.png  1512 × 781 px)
-        //  cx = plate centre x, cy = centre y, d = diameter (all in original px)
-        //  displayH = rendered diameter on screen (px)
+        //  PLATE META — same colours & sizes as SBD original
         // ─────────────────────────────────────────────
         const PLATE_META = [
-            { kg: 25,   cx: 148,  cy: 365, d: 590, displayH: 116, color: "#bf3b38", cls: "is-red",    label: "25 kg · Red"    },
-            { kg: 20,   cx: 318,  cy: 372, d: 548, displayH: 108, color: "#2e66b8", cls: "is-blue",   label: "20 kg · Blue"   },
-            { kg: 15,   cx: 503,  cy: 378, d: 510, displayH: 100, color: "#d9a02c", cls: "is-yellow", label: "15 kg · Yellow" },
-            { kg: 10,   cx: 670,  cy: 386, d: 456, displayH: 90,  color: "#1d7a4b", cls: "is-green",  label: "10 kg · Green"  },
-            { kg: 5,    cx: 820,  cy: 400, d: 380, displayH: 76,  color: "#ebe9e3", cls: "is-white",  label: "5 kg · White"   },
-            { kg: 2.5,  cx: 917,  cy: 430, d: 238, displayH: 62,  color: "#252525", cls: "is-black",  label: "2.5 kg · Black" },
-            { kg: 1.25, cx: 1005, cy: 440, d: 198, displayH: 52,  color: "#bdc3c8", cls: "is-silver", label: "1.25 kg · Silver"},
+            { kg: 25,   color: "#bf3b38", cls: "is-red",    h: 112, w: 34, label: "25 kg" },
+            { kg: 20,   color: "#2e66b8", cls: "is-blue",   h: 104, w: 30, label: "20 kg" },
+            { kg: 15,   color: "#d9a02c", cls: "is-yellow", h: 96,  w: 28, label: "15 kg" },
+            { kg: 10,   color: "#1d7a4b", cls: "is-green",  h: 86,  w: 24, label: "10 kg" },
+            { kg: 5,    color: "#ebe9e3", cls: "is-white",  h: 72,  w: 20, label: "5 kg"  },
+            { kg: 2.5,  color: "#252525", cls: "is-black",  h: 60,  w: 16, label: "2.5 kg"},
+            { kg: 1.25, color: "#bdc3c8", cls: "is-silver", h: 50,  w: 12, label: "1.25 kg"},
         ];
 
-        const ANGUS_W = 1512;
-        const ANGUS_H = 781;
-        const BARBELL_KG = 20; // fixed barbell weight
+        const BARBELL_KG = 20;
 
         // ─────────────────────────────────────────────
         //  RPE CONVERT
@@ -565,137 +584,104 @@
             const targetPct = targetList[targetReps - 1] / 100;
             const e1rm      = baseWeight / basePct;
             const targetW   = e1rm * targetPct;
+            const roundedW  = Math.round(targetW * 2) / 2; // round to 0.5 kg
 
-            // Round to nearest 0.5 kg for plate math
-            const roundedW = Math.round(targetW * 2) / 2;
-
-            document.getElementById('est-1rm').innerText         = e1rm.toFixed(2) + ' kg';
-            document.getElementById('target-intensity').innerText = (targetPct * 100).toFixed(1) + '%';
+            document.getElementById('est-1rm').innerText          = e1rm.toFixed(2) + ' kg';
+            document.getElementById('target-intensity').innerText  = (targetPct * 100).toFixed(1) + '%';
             document.getElementById('target-weight-val').innerText = targetW.toFixed(2) + ' kg';
 
             document.getElementById('results').style.display = 'block';
-
             renderPlateSetup(roundedW);
         }
 
         // ─────────────────────────────────────────────
-        //  PLATE BREAKDOWN LOGIC
+        //  PLATE BREAKDOWN
         // ─────────────────────────────────────────────
-        function buildBreakdown(totalKg, barbellKg) {
-            let remaining = Math.max(0, totalKg - barbellKg) / 2; // per side
+        function buildBreakdown(totalKg) {
+            let remaining = Math.max(0, totalKg - BARBELL_KG) / 2;
             const plates  = [];
-
             for (const meta of PLATE_META) {
-                if (remaining <= 0) break;
-                const count = Math.floor(remaining / meta.kg);
+                if (remaining < 0.01) break;
+                const count = Math.floor(remaining / meta.kg + 0.001);
                 if (count > 0) {
                     plates.push({ meta, count });
                     remaining -= count * meta.kg;
+                    remaining  = Math.round(remaining * 1000) / 1000;
                 }
             }
-
             return {
                 plates,
-                perSide: Math.max(0, totalKg - barbellKg) / 2,
-                remaining: Math.round(remaining * 100) / 100,
+                perSide: Math.max(0, totalKg - BARBELL_KG) / 2,
+                remaining,
             };
         }
 
         // ─────────────────────────────────────────────
-        //  BUILD ONE PLATE DIV (CSS sprite from ANGUS.png)
-        // ─────────────────────────────────────────────
-        function buildPlateDiv(meta, side) {
-            const D     = meta.displayH;           // rendered circle diameter (px)
-            const scale = D / meta.d;
-            const bgW   = Math.round(ANGUS_W * scale);
-            const bgH   = Math.round(ANGUS_H * scale);
-            const cX    = Math.round(meta.cx * scale);
-            const cY    = Math.round(meta.cy * scale);
-            const bpX   = -(cX - D / 2);
-            const bpY   = -(cY - D / 2);
-
-            const div = document.createElement('div');
-            div.className = `plate ${meta.cls}`;
-            div.setAttribute('aria-label', `${side} ${meta.kg} kg plate`);
-            div.style.cssText = `
-                width:${D}px;
-                height:${D}px;
-                background-image:url('ANGUS.png');
-                background-size:${bgW}px ${bgH}px;
-                background-position:${bpX}px ${bpY}px;
-                background-repeat:no-repeat;
-                background-color:transparent;
-            `;
-
-            const lbl = document.createElement('span');
-            lbl.className = 'plate-lbl';
-            lbl.textContent = meta.kg;
-            div.appendChild(lbl);
-            return div;
-        }
-
-        // ─────────────────────────────────────────────
-        //  RENDER FULL BARBELL VISUALIZATION
+        //  RENDER BARBELL
         // ─────────────────────────────────────────────
         function renderPlateSetup(totalKg) {
-            const section  = document.getElementById('plate-section');
-            const leftEl   = document.getElementById('plates-left');
-            const rightEl  = document.getElementById('plates-right');
-            const legendEl = document.getElementById('plate-legend');
-            const warnEl   = document.getElementById('plate-warn');
+            const bd = buildBreakdown(totalKg);
 
-            const bd = buildBreakdown(totalKg, BARBELL_KG);
-
-            // Header text
+            // Header
             document.getElementById('plate-total-display').textContent =
                 totalKg.toFixed(1) + ' kg';
             document.getElementById('plate-sub-display').textContent =
-                `20 kg barbell + ${bd.perSide.toFixed(2)} kg per side`;
+                '20 kg barbell + ' + bd.perSide.toFixed(2) + ' kg per side';
 
-            // Clear previous plates
+            // Warning
+            const warnEl = document.getElementById('plate-warn-inline');
+            warnEl.textContent = bd.remaining >= 0.1
+                ? '⚠ ' + (bd.remaining * 2).toFixed(2) + ' kg unloaded'
+                : '';
+
+            // Build plate divs
+            const leftEl  = document.getElementById('plates-left');
+            const rightEl = document.getElementById('plates-right');
             leftEl.innerHTML  = '';
             rightEl.innerHTML = '';
-            legendEl.innerHTML = '';
-            warnEl.textContent = '';
 
-            // Draw plates
             bd.plates.forEach(({ meta, count }) => {
                 for (let i = 0; i < count; i++) {
-                    leftEl.appendChild(buildPlateDiv(meta, 'Left'));
-                    rightEl.appendChild(buildPlateDiv(meta, 'Right'));
+                    [leftEl, rightEl].forEach(container => {
+                        const div = document.createElement('div');
+                        div.className = 'plate ' + meta.cls;
+                        div.setAttribute('aria-label', meta.label + ' plate');
+                        div.style.cssText =
+                            'width:' + meta.w + 'px;' +
+                            'height:' + meta.h + 'px;' +
+                            'background:' + meta.color + ';';
+                        const span = document.createElement('span');
+                        span.textContent = meta.kg;
+                        div.appendChild(span);
+                        container.appendChild(div);
+                    });
                 }
             });
 
             // Legend
+            const legendEl = document.getElementById('plate-legend');
+            legendEl.innerHTML = '';
+
             if (bd.plates.length === 0) {
-                const chip = document.createElement('span');
-                chip.className = 'legend-chip';
-                chip.textContent = 'Barbell only (20 kg)';
-                legendEl.appendChild(chip);
+                const item = document.createElement('div');
+                item.className = 'plate-legend-item';
+                item.innerHTML = '<div class="legend-top">Barbell only</div><div class="legend-count">20 kg</div>';
+                legendEl.appendChild(item);
             } else {
                 bd.plates.forEach(({ meta, count }) => {
-                    const chip = document.createElement('div');
-                    chip.className = 'legend-chip';
-
-                    const dot = document.createElement('span');
-                    dot.className = 'legend-dot';
-                    dot.style.background = meta.color;
-
-                    chip.appendChild(dot);
-                    chip.appendChild(document.createTextNode(
-                        `${meta.label}  ×${count} per side`
-                    ));
-                    legendEl.appendChild(chip);
+                    const item = document.createElement('div');
+                    item.className = 'plate-legend-item';
+                    item.innerHTML =
+                        '<div class="legend-top">' +
+                            '<span class="legend-dot" style="background:' + meta.color + '"></span>' +
+                            meta.label +
+                        '</div>' +
+                        '<div class="legend-count">×' + count + ' per side</div>';
+                    legendEl.appendChild(item);
                 });
             }
 
-            // Warning if leftover weight can't be accounted for
-            if (bd.remaining >= 0.1) {
-                warnEl.textContent =
-                    `⚠️  ${(bd.remaining * 2).toFixed(2)} kg cannot be loaded with standard plates — consider adjusting rounding.`;
-            }
-
-            section.style.display = 'block';
+            document.getElementById('plate-section').style.display = 'block';
         }
     </script>
 </body>
