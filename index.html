@@ -568,7 +568,7 @@
             const targetPct = targetList[targetReps - 1] / 100;
             const e1rm      = baseWeight / basePct;
             const targetW   = e1rm * targetPct;
-            const roundedW  = Math.round(targetW * 2) / 2; // round to 0.5 kg
+            const roundedW  = Math.floor(targetW / 2.5) * 2.5; // round DOWN to nearest 2.5 kg (min plate increment = 1.25 kg × 2 sides)
 
             document.getElementById('est-1rm').innerText          = e1rm.toFixed(2) + ' kg';
             document.getElementById('target-intensity').innerText  = (targetPct * 100).toFixed(1) + '%';
